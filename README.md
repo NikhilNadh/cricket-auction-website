@@ -26,45 +26,11 @@ Package Manager: npm / bun
 
 State Management: React Context API
 
-# 📂 Project Structure
-
-Cricket-Auction/
-│
-├── public/                 # Static assets
-├── src/
-│   ├── assets/             # Images & media
-│   ├── components/
-│   │   ├── ui/             # Reusable UI components
-│   │   ├── AuctionBoard.tsx
-│   │   ├── Navigation.tsx
-│   │   ├── NavLink.tsx
-│   │   ├── PlayerManagement.tsx
-│   │   ├── TeamDashboard.tsx
-│   │   └── TeamSetup.tsx
-│   │
-│   ├── context/
-│   │   └── AuctionContext.tsx   # Global state
-│   │
-│   ├── hooks/              # Custom React hooks
-│   ├── lib/                # Utility functions
-│   ├── pages/              # App pages
-│   ├── types/              # TypeScript types
-│   │
-│   ├── App.tsx
-│   ├── main.tsx
-│   ├── index.css
-│   └── App.css
-│
-├── index.html
-├── package.json
-├── bun.lock / package-lock.json
-└── README.md
-
 ## ⚙️ Installation & Setup
 
 1. Clone the Repository
 
- - git clone 
+ - git clone https://github.com/NikhilNadh/cricket-auction-website.git
  - cd cricket-auction-website
 
 2. Install Dependencies
