@@ -64,6 +64,21 @@ State Management: React Context API
    - Player statistics & filters
    - Dark/Light Theme Toggle
 
+#  ScreenShots
+
+### Team Setup
+<img src="screenshots/teamsetup.png" width="250"/>
+
+### Add Player
+<img src="screenshots/addplayer.png" width="250"/>
+
+### Auction
+<img src="screenshots/auction.png" width="250"/>
+
+### Dashboard
+<img src="screenshots/dashboard.png" width="250"/>
+
+
  ##  👨‍💻 Author
 
  Nikhil Nadh S 
