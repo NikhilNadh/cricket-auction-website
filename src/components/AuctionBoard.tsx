@@ -284,10 +284,27 @@ const AuctionBoard = () => {
             <div className="space-y-3">
               {teams.map((team) => {
                 const isFull = team.players.length >= team.maxSize;
-                const nextBid = currentBidder ? currentBid + bidIncrement : currentBid;
-                const canAfford = team.remainingBudget >= nextBid;
-                const isCurrentBidder = currentBidder?.id === team.id;
-                const isDisabled = isFull || !canAfford || isPlayerSold;
+                const nextBid = currentBidder
+    ? currentBid + bidIncrement
+    : currentBid;
+
+const maxBid = calculateMaxBid(team);
+
+const canAfford =
+    team.remainingBudget >= nextBid &&
+    nextBid <= maxBid;
+
+const maxBidReached =
+    nextBid > maxBid;
+
+const isCurrentBidder =
+    currentBidder?.id === team.id;
+
+const isDisabled =
+    isFull ||
+    maxBidReached ||
+    !canAfford ||
+    isPlayerSold;
 
                 return (
                   <button
@@ -319,18 +336,35 @@ const AuctionBoard = () => {
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium truncate">{team.name}</span>
-                          {isCurrentBidder && (
-                            <Badge variant="outline" className="text-xs border-primary text-primary">
-                              HIGHEST
-                            </Badge>
-                          )}
-                          {isFull && (
-                            <Badge variant="outline" className="text-xs border-accent text-accent">
-                              FULL
-                            </Badge>
-                          )}
-                        </div>
+  <span className="font-medium truncate">{team.name}</span>
+
+  {isCurrentBidder && (
+    <Badge
+      variant="outline"
+      className="text-xs border-primary text-primary"
+    >
+      HIGHEST
+    </Badge>
+  )}
+
+  {isFull && (
+    <Badge
+      variant="outline"
+      className="text-xs border-accent text-accent"
+    >
+      FULL
+    </Badge>
+  )}
+
+  {maxBidReached && !isFull && (
+    <Badge
+      variant="destructive"
+      className="text-xs"
+    >
+      ✕ MAX BID
+    </Badge>
+  )}
+</div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Wallet className="w-3 h-3" />
                           ₹{team.remainingBudget.toLocaleString()}
