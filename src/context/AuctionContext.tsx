@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Player, Team, AuctionState, AppStep } from '@/types/auction';
 
 interface AuctionSnapshot {
@@ -12,6 +12,11 @@ interface AuctionContextType {
   setStep: (step: AppStep) => void;
   teams: Team[];
   setTeams: React.Dispatch<React.SetStateAction<Team[]>>;
+  // Permanent Player Database
+  allPlayers: Player[];
+  setAllPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
+
+  // Current Auction Pool
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   basePrice: number;
@@ -45,7 +50,44 @@ const TEAM_COLORS = [
 export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [step, setStep] = useState<AppStep>('setup');
   const [teams, setTeams] = useState<Team[]>([]);
+  // Permanent Database
+  const [allPlayers, setAllPlayers] = useState<Player[]>([]);
+
+  // Current Auction Pool
   const [players, setPlayers] = useState<Player[]>([]);
+  // Load player database
+useEffect(() => {
+  const storedPlayers = localStorage.getItem("playerDatabase");
+
+  if (storedPlayers) {
+    setAllPlayers(JSON.parse(storedPlayers));
+  }
+}, []);
+
+// Save player database
+useEffect(() => {
+  localStorage.setItem(
+    "playerDatabase",
+    JSON.stringify(allPlayers)
+  );
+}, [allPlayers]);
+
+// Load auction pool
+useEffect(() => {
+  const storedPool = localStorage.getItem("auctionPool");
+
+  if (storedPool) {
+    setPlayers(JSON.parse(storedPool));
+  }
+}, []);
+
+// Save auction pool
+useEffect(() => {
+  localStorage.setItem(
+    "auctionPool",
+    JSON.stringify(players)
+  );
+}, [players]);
   const [basePrice, setBasePrice] = useState<number>(500);
   const [bidIncrement, setBidIncrement] = useState<number>(50);
   const [maxTeamSize, setMaxTeamSize] = useState<number>(11);
@@ -330,6 +372,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setStep,
       teams,
       setTeams,
+      allPlayers,
+      setAllPlayers,
       players,
       setPlayers,
       basePrice,
