@@ -162,7 +162,17 @@ const AuctionBoard = () => {
                     <img 
                       src={getImageByCode(currentPlayer.imageCode)!} 
                       alt={currentPlayer.name} 
-                      className="w-40 h-40 mx-auto mb-4 rounded-full object-cover border-4 border-primary shadow-[0_0_30px_hsl(var(--primary)/0.4)]"
+                      className="
+w-full
+max-w-sm
+h-[280px]
+mx-auto
+rounded-xl
+object-cover
+border-4
+border-primary
+shadow-[0_0_50px_hsl(var(--primary)/0.5)]
+"
                     />
                   ) : (
                     <div className="w-36 h-36 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center text-5xl font-display font-bold text-primary">
@@ -179,36 +189,51 @@ const AuctionBoard = () => {
                 </div>
 
                 {/* Current Bid Display */}
-                <div className="text-center py-6 bg-secondary/30 rounded-xl">
-                  <div className="text-muted-foreground text-sm mb-1">CURRENT BID</div>
-                  <div className={`bid-display ${animateBid ? 'animate-bid' : ''}`}>
-                    ₹{currentBid.toLocaleString()}
-                  </div>
-                  {currentBidder && (
-                    <div className="mt-2 flex items-center justify-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: currentBidder.color }}
-                      />
-                      <span className="font-medium">{currentBidder.name}</span>
-                    </div>
-                  )}
-                </div>
+                {/* Current Bid Display */}
+<div className="py-6 px-6 bg-secondary/30 rounded-xl">
+  <div className="flex items-center justify-center gap-8">
+
+    <span className="text-muted-foreground text-lg font-medium">
+      CURRENT BID
+    </span>
+
+    <span
+      className={`bid-display ${animateBid ? "animate-bid" : ""}`}
+    >
+      ₹{currentBid.toLocaleString()}
+    </span>
+
+    {currentBidder && (
+      <div className="flex items-center gap-2">
+        <div
+          className="w-3 h-3 rounded-full"
+          style={{ backgroundColor: currentBidder.color }}
+        />
+
+        <span className="font-semibold text-lg">
+          {currentBidder.name}
+        </span>
+      </div>
+    )}
+
+  </div>
+</div>
 
                 {/* Bid Increment Control */}
                 <div className="flex items-center justify-center gap-3 p-3 bg-secondary/20 rounded-lg">
                   <TrendingUp className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">Bid Increment:</span>
                   <Input
-                    type="number"
-                    value={bidIncrement}
-                    onChange={(e) => {
-                      const num = parseInt(e.target.value) || 0;
-                      if (num >= 0) updateBidIncrement(num);
-                    }}
-                    className="w-28 h-8 text-center font-display"
-                    min={1}
-                  />
+  type="number"
+  value={bidIncrement}
+  onChange={(e) => {
+    const num = parseInt(e.target.value) || 0;
+    if (num >= 100) updateBidIncrement(num);
+  }}
+  className="w-28 h-8 text-center font-display"
+  min={100}
+  step={100}
+/>
                 </div>
 
                 {/* Action Buttons - Sold, Unsold & Undo */}

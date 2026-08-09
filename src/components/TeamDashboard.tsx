@@ -1,11 +1,28 @@
+import { useState } from 'react';
+import SimplePlayerList from "@/components/dashboard/SimplePlayerList";
+import BoughtPlayers from "@/components/dashboard/BoughtPlayers";
+import TeamRoster from "@/components/dashboard/TeamRoster";
 import { useAuction } from '@/context/AuctionContext';
+import DashboardDialog from "@/components/dashboard/DashboardDialog";
+import TeamSelector from "@/components/dashboard/TeamSelector";
+import PlayerCard from "@/components/dashboard/PlayerCard";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Crown, Wallet, Users, TrendingUp } from 'lucide-react';
 import { getImageByCode } from '@/lib/imageUtils';
+import { Team } from "@/types/auction";
 
 const TeamDashboard = () => {
   const { teams, players } = useAuction();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+const [dialogTitle, setDialogTitle] = useState("");
+
+const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+
+const [dialogMode, setDialogMode] = useState<
+  "teams" | "bought" | "remaining" | "unsold"
+>("teams");
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -20,7 +37,9 @@ const TeamDashboard = () => {
   const totalSpent = teams.reduce((acc, team) => acc + (team.budget - team.remainingBudget), 0);
   const totalPlayers = teams.reduce((acc, team) => acc + team.players.length, 0);
   const unsoldPlayers = players.filter(p => p.status === 'unsold');
-
+  const remainingPlayers = players.filter(
+  p => p.status === 'available'
+);
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
@@ -33,15 +52,31 @@ const TeamDashboard = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-4 mb-8">
-        <Card className="card-stadium text-center">
+      <div className="grid gap-4 md:grid-cols-5 mb-8">
+        <Card
+  className="card-stadium text-center cursor-pointer hover:border-primary transition-all"
+  onClick={() => {
+    setDialogMode("teams");
+    setDialogTitle("Select Team");
+    setSelectedTeam(null);
+    setDialogOpen(true);
+  }}
+>
           <CardContent className="pt-6">
             <Users className="w-8 h-8 mx-auto mb-2 text-primary" />
             <div className="font-display text-3xl text-primary mb-1">{teams.length}</div>
             <div className="text-muted-foreground text-sm">Teams</div>
           </CardContent>
         </Card>
-        <Card className="card-stadium text-center">
+        <Card
+  className="card-stadium text-center cursor-pointer hover:border-primary transition-all"
+  onClick={() => {
+    setDialogMode("bought");
+    setSelectedTeam(null);
+    setDialogTitle("Players Bought");
+    setDialogOpen(true);
+  }}
+>
           <CardContent className="pt-6">
             <TrendingUp className="w-8 h-8 mx-auto mb-2 text-accent" />
             <div className="font-display text-3xl text-accent mb-1">{totalPlayers}</div>
@@ -55,7 +90,32 @@ const TeamDashboard = () => {
             <div className="text-muted-foreground text-sm">Total Spent</div>
           </CardContent>
         </Card>
-        <Card className="card-stadium text-center">
+        <Card
+  className="card-stadium text-center cursor-pointer hover:border-primary transition-all"
+  onClick={() => {
+    setDialogMode("remaining");
+    setDialogOpen(true);
+  }}
+>
+  <CardContent className="pt-6">
+    <Users className="w-8 h-8 mx-auto mb-2 text-blue-500" />
+
+    <div className="font-display text-3xl text-blue-500 mb-1">
+      {remainingPlayers.length}
+    </div>
+
+    <div className="text-muted-foreground text-sm">
+      Remaining Players
+    </div>
+  </CardContent>
+</Card>
+        <Card
+  className="card-stadium text-center cursor-pointer hover:border-primary transition-all"
+  onClick={() => {
+    setDialogMode("unsold");
+    setDialogOpen(true);
+  }}
+>
           <CardContent className="pt-6">
             <Badge variant="outline" className="text-destructive border-destructive mb-2">UNSOLD</Badge>
             <div className="font-display text-3xl text-destructive mb-1">{unsoldPlayers.length}</div>
@@ -95,10 +155,16 @@ const TeamDashboard = () => {
                     )}
                     <div>
                       <CardTitle className="font-display text-lg">{team.name}</CardTitle>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Crown className="w-3 h-3 text-accent" />
-                        {team.captain}
-                      </div>
+                      {team.captain && (
+                          <span className="flex items-center gap-1">
+                            👑 {team.captain}
+                          </span>
+                        )}
+                      {team.iconPlayer && (
+                          <span className="flex items-center gap-1">
+                            ⭐ {team.iconPlayer}
+                          </span>
+                        )}
                     </div>
                   </div>
                   {isFull && (
@@ -233,6 +299,64 @@ const TeamDashboard = () => {
           </div>
         </div>
       )}
+      <DashboardDialog
+  open={dialogOpen}
+  onOpenChange={setDialogOpen}
+  title={
+    selectedTeam
+      ? selectedTeam.name
+      : dialogTitle
+  }
+>
+
+  {!selectedTeam && dialogMode === "teams" && (
+    <TeamSelector
+      teams={teams}
+      onSelect={(team) => {
+        setSelectedTeam(team);
+      }}
+    />
+  )}
+
+  {dialogMode === "bought" && (
+  <BoughtPlayers
+    players={players}
+    teams={teams}
+    onBack={() => setDialogOpen(false)}
+    onClose={() => setDialogOpen(false)}
+  />
+)}
+
+ {dialogMode === "remaining" && (
+  <SimplePlayerList
+    title="Remaining Players"
+    players={remainingPlayers}
+    onBack={() => setDialogOpen(false)}
+    onClose={() => setDialogOpen(false)}
+  />
+)}
+
+{dialogMode === "unsold" && (
+  <SimplePlayerList
+    title="Unsold Players"
+    players={unsoldPlayers}
+    onBack={() => setDialogOpen(false)}
+    onClose={() => setDialogOpen(false)}
+  />
+)}
+
+  {selectedTeam && (
+    <TeamRoster
+        team={selectedTeam}
+        onBack={() => setSelectedTeam(null)}
+        onClose={() => {
+            setDialogOpen(false);
+            setSelectedTeam(null);
+        }}
+    />
+)}
+
+</DashboardDialog>
     </div>
   );
 };

@@ -10,7 +10,7 @@ import { getImageByCode } from '@/lib/imageUtils';
 
 const TeamSetup = () => {
   const { teams, setTeams, maxTeamSize, setMaxTeamSize, setStep } = useAuction();
-  const [newTeam, setNewTeam] = useState({ name: '', captain: '', budget: 10000, logoCode: '' });
+  const [newTeam, setNewTeam] = useState({ name: '', captain: '', iconPlayer: '', budget: 10000, logoCode: '' });
 
   const addTeam = () => {
     if (!newTeam.name.trim() || !newTeam.captain.trim()) return;
@@ -19,6 +19,7 @@ const TeamSetup = () => {
       id: `team-${Date.now()}`,
       name: newTeam.name.trim(),
       captain: newTeam.captain.trim(),
+      iconPlayer: newTeam.iconPlayer.trim(),
       budget: newTeam.budget,
       remainingBudget: newTeam.budget,
       maxSize: maxTeamSize,
@@ -28,7 +29,7 @@ const TeamSetup = () => {
     };
     
     setTeams(prev => [...prev, team]);
-    setNewTeam({ name: '', captain: '', budget: 10000, logoCode: '' });
+    setNewTeam({ name: '', captain: '', iconPlayer: '', budget: 10000, logoCode: '' });
   };
 
   const removeTeam = (id: string) => {
@@ -76,6 +77,22 @@ const TeamSetup = () => {
                 className="bg-secondary border-border"
               />
             </div>
+            <div>
+  <Label htmlFor="iconPlayer">Icon Player</Label>
+  <Input
+    id="iconPlayer"
+    value={newTeam.iconPlayer}
+    onChange={(e) =>
+      setNewTeam(prev => ({
+        ...prev,
+        iconPlayer: e.target.value,
+      }))
+    }
+    placeholder="Player Name"
+    className="bg-secondary border-border"
+  />
+</div>
+
             <div>
               <Label htmlFor="budget">Team Budget (₹)</Label>
               <Input
@@ -178,10 +195,16 @@ const TeamSetup = () => {
                         <span className="font-display font-semibold">{team.name}</span>
                       </div>
                       <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Crown className="w-3 h-3" />
-                          {team.captain}
-                        </span>
+                        {team.captain && (
+                          <span className="flex items-center gap-1">
+                            👑 {team.captain}
+                          </span>
+                        )}
+                        {team.iconPlayer && (
+                          <span className="flex items-center gap-1">
+                            ⭐ {team.iconPlayer}
+                          </span>
+                        )}
                         <span className="flex items-center gap-1">
                           <Wallet className="w-3 h-3" />
                           ₹{team.budget.toLocaleString()}

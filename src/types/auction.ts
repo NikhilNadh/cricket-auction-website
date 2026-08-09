@@ -14,6 +14,7 @@ export interface Team {
   id: string;
   name: string;
   captain: string;
+  iconPlayer: string;
   budget: number;
   remainingBudget: number;
   maxSize: number;

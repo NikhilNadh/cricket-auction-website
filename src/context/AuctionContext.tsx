@@ -96,18 +96,18 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const getNextAvailablePlayer = useCallback((unsoldRound: boolean = false) => {
-    const availablePlayers = players.filter(p => {
-      if (unsoldRound) {
-        return p.status === 'unsold';
-      }
-      return p.status === 'available';
-    });
-    
-    if (availablePlayers.length === 0) return null;
-    
-    const shuffled = shuffleArray(availablePlayers);
-    return shuffled[0];
-  }, [players]);
+  const availablePlayers = players.filter((p) => {
+    return unsoldRound
+      ? p.status === "unsold"
+      : p.status === "available";
+  });
+
+  if (availablePlayers.length === 0) return null;
+
+  const randomIndex = Math.floor(Math.random() * availablePlayers.length);
+
+  return availablePlayers[randomIndex];
+}, [players]);
 
   const startAuction = useCallback(() => {
     const availableTeams = getAvailableTeams();
